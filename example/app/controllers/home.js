@@ -9,5 +9,5 @@ module.exports = {
 };
 
 function index(req, res){
-    res.send('request received and responded to!');
+    res.render('index');
 }

@@ -39,8 +39,8 @@ exports.load = function(app, options){
     app.models = {};
     var modelsDir = p.join(appDir, '/models/');
     var controllersDir = p.join(appDir, '/controllers/');
-    console.log(modelsDir);
-    console.log(controllersDir);
+    console.log('models dir:', modelsDir);
+    console.log('controllers dir:', controllersDir);
     var modelFiles;
     var controllerFiles;
     if(fs.existsSync(modelsDir))
@@ -51,7 +51,7 @@ exports.load = function(app, options){
         for(var i in modelFiles){
             var modelFile = modelFiles[i];
             var model = require(p.join(modelsDir, modelFile));
-            var modelName = modelFile.split(".")[0];
+            var modelName = model.name || modelFile.split(".")[0];
             app.models[modelName] = model;
         }
     }
@@ -67,13 +67,13 @@ exports.load = function(app, options){
                 var path = rootUrl + root + (route.split(' ')[1] || '');
                 console.log(method + " " + path + ': ' + (routes[route].name || 'function'));
                 if(typeof(routes[route]) == 'function'){
-                    app[method](path, setRenderRoot(controllerName + '/'), addModels(), routes[route]);
+                    app[method](path, setRenderRoot(controllerName + '/'), addModels(app.models), routes[route]);
                 }else{
                     var localMiddleware = [];
                     for(var i in routes[route]){
                         localMiddleware.push(routes[route][i]);
                     }
-                    app[method].apply(app, [path].concat(setRenderRoot(controllerName + '/'), addModels(), localMiddleware));
+                    app[method].apply(app, [path].concat(setRenderRoot(controllerName + '/'), addModels(app.models), localMiddleware));
                 }
             }
         });
