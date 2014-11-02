@@ -1,5 +1,5 @@
 {
-  "name": "swift",
+  "name": "swift.js",
   "version": "2.0.0",
   "description": "SwiftJS full re-write, concentrating mainly on routing and model handling with a slight modification to view rendering paths as well",
   "main": "index.js",
