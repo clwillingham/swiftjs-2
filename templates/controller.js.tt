@@ -1,0 +1,16 @@
+
+module.exports = {
+    {{#if root}}
+    root: '{{root}}',
+    {{else}}
+//  root: '/', //root defaults to /{{name}}, but may be set by setting exports.root
+    {{/if}}
+    routes: {
+//        'get': [someMiddlewhere, index], //call a middlewhere function before calling index action.
+        'get': index //or just call action directly (providing no path indicates root path for controller)
+    }
+}
+
+function index(req, res){
+    res.render('index'); //renders from directory views/{{name}}
+}

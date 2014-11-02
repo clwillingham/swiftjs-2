@@ -1,0 +1,101 @@
+#!/usr/bin/env node
+
+var program = require('commander'),
+    handlebars = require('handlebars'),
+    path = require('path'),
+    fs = require('fs');
+
+function generateTemplate(templateFile, outputDir, args){
+    console.log('WRITE: ' + outputDir);
+    var template = handlebars.compile(fs.readFileSync(__dirname+'/../templates/'+templateFile, 'utf-8'))(args);
+    fs.writeFileSync(outputDir, template);
+}
+
+function generateController(name, args){
+    var root = './'+args.app || '.';
+    generateTemplate('controller.js.tt', root + '/controllers/'+name+'.js', {name: name, root: args.root});
+    fs.mkdirSync(root + '/views/'+name);
+    console.log('controller written to ./controllers/'+name+'.js');
+}
+
+function generatePackageFile(name){
+    var pkg = {
+        name: name,
+        version: '0.0.1',
+        private:true,
+        dependencies: {
+            "body-parser": "^1.1.2",
+            "ejs": "^1.0.0",
+            "errorhandler": "^1.0.1",
+            "express": "^4.9.8",
+            "method-override": "^1.0.0",
+            "mongoose": "^3.8.17"
+        },
+        scripts: { start: 'node server' }
+    };
+    fs.writeFile('./package.json', JSON.stringify(pkg, null, 4));
+}
+
+function generateApp(name, args){
+    var root = './'+name;
+    var modelsDir = root+'/models';
+    var controllersDir = root+'/controllers';
+    var viewsDir = root+'/views';
+
+    fs.mkdirSync(root);
+    fs.mkdirSync(modelsDir);
+    fs.mkdirSync(controllersDir);
+    fs.mkdirSync(viewsDir);
+    if(args.server){
+        var data = handlebars.compile(fs.readFileSync(__dirname+'/../templates/server.js.tt', 'utf-8'))({name: name});
+        fs.writeFileSync('./index.js', data);
+    }
+    generateController('Index', {root: '/', app: name});
+    generateTemplate('view.ejs.tt', viewsDir+'/Index/index.ejs');
+}
+
+program
+    .version('0.0.1');
+
+program
+    .command('gen-app <name>')
+    .description('generate an app folder structure')
+    .option('-s --server', 'generate main server file as well')
+    .action(generateApp);
+
+program
+    .command('gen-project <name>')
+    .description('Generate full project including index.js and package.json')
+    .action(function(name, args){
+        fs.mkdirSync(name);
+        process.chdir('./'+name);
+        generateApp('app', {server: true});
+        generatePackageFile(name);
+    });
+
+
+program
+    .command('gen-controller <name>')
+    .description('generate a controller')
+    .option('-r --root <root>', 'Root url path')
+    .option('-a --app <app>', 'App name (you can also just cd into app root path instead)')
+    .action(generateController);
+
+program
+    .command('gen-model <name>')
+    .description('generate a mongoose model')
+    .option('-a --app <app>', 'App name (you can also just cd into app root path instead)')
+    .action(function(name, args){
+        var root = './'+args.app || '.';
+        generateTemplate('model.js.tt', root + '/models/'+name+'.js', {name: name.toLowerCase()});
+        console.log('controller written to ./models/'+name+'.js');
+    });
+
+program
+    .command('s')
+    .description('start server')
+    .action(function(args){
+        require('../index.js').run(require(process.cwd()+'/config.json'), process.cwd());
+    });
+
+program.parse(process.argv);
