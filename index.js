@@ -3,6 +3,7 @@
  */
 var fs = require('fs'),
     p = require('path'),
+    readdir = require('fs-readdir-recursive'),
     _ = require('underscore');
 
 function setRenderRoot(viewRoot){
@@ -44,9 +45,9 @@ exports.load = function(app, options){
     var modelFiles;
     var controllerFiles;
     if(fs.existsSync(modelsDir))
-        modelFiles = fs.readdirSync(modelsDir);
+        modelFiles = readdir(modelsDir);
     if(fs.existsSync(controllersDir))
-        controllerFiles = fs.readdirSync(controllersDir);
+        controllerFiles = readdir(controllersDir);
     if(modelFiles != null){
         for(var i in modelFiles){
             var modelFile = modelFiles[i];

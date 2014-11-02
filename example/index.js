@@ -14,7 +14,6 @@ var express = require("express"),
 mongoose.connect('mongodb://localhost/swiftTest');
 swift.load(app,  __dirname + '/app');
 
-
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
