@@ -29,6 +29,7 @@ function generatePackageFile(name){
             "errorhandler": "^1.0.1",
             "express": "^4.9.8",
             "method-override": "^1.0.0",
+            "swift": "^2.0.0",
             "mongoose": "^3.8.17"
         },
         scripts: { start: 'node server' }
