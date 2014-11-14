@@ -31,7 +31,7 @@ function generatePackageFile(name){
             "method-override": "^1.0.0",
             "swift.js": "^2.0.0",
             "mongoose": "^3.8.17",
-            "swift": "^2.0.5"
+            "swift.js": "^2.0.6"
         },
         scripts: { start: 'node server' }
     };
