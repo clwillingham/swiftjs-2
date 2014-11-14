@@ -1,6 +1,6 @@
 var express = require("express"),
     app = express(),
-    swift = require('swift'),
+    swift = require('swift.js'),
     mongoose = require('mongoose'),
     bodyParser = require('body-parser'),
     errorHandler = require('errorhandler'),
